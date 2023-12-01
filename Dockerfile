@@ -19,14 +19,11 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install xsl \
     && docker-php-ext-install opcache
 
+
 COPY moodle/ /var/www/html/
 
-RUN chown -R www-data:www-data /var/www/html \
-    && a2enmod rewrite
-    
-COPY config.php /var/www/html/config.php
+RUN chown -R www-data:www-data /var/www/html
 
-# Custom PHP configurations can go here
 RUN { \
         echo 'opcache.memory_consumption=128'; \
         echo 'opcache.interned_strings_buffer=8'; \
@@ -34,5 +31,6 @@ RUN { \
         echo 'opcache.revalidate_freq=2'; \
         echo 'opcache.fast_shutdown=1'; \
         echo 'opcache.enable_cli=1'; \
-        echo 'max_input_vars = 5000'; \
-    } > /usr/local/etc/php/conf.d/custom.ini
+    } > /usr/local/etc/php/conf.d/opcache-recommended.ini
+
+RUN echo 'max_input_vars = 5000' > /usr/local/etc/php/conf.d/moodle-recommended.ini
